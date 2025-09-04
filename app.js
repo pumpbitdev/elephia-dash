@@ -40,6 +40,24 @@ app.get('/api/transactions', async (req, res) => {
   }
 });
 
+app.get('/api/transactions/:telegram_id', async (req, res) => {
+  try {
+    // 1. Obtenemos el ID de los parámetros de la URL
+    const { telegram_id } = req.params;
+    console.log(`Petición para el usuario: ${telegram_id}`);
+
+    // 2. Ejecutamos la consulta filtrando por el ID
+    const [transactions] = pool.query('SELECT * FROM transactions WHERE telegram_id = ?;', [telegram_id]);
+
+    // 3. Enviamos el resultado
+    res.json(transactions);
+
+  } catch (error) {
+    console.error(`Error al obtener transacciones para ${telegram_id}:`, error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+});
+
 
 // Inicia el servidor
 app.listen(PORT, () => {
