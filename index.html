@@ -98,6 +98,50 @@
         });
       }
 
+      async function loadUserTransactions(userId) {
+        console.log(`Cargando transacciones para el usuario ${userId}...`);
+
+        // 1. Construir la URL correcta para la API
+        // ¿Qué URL deberíamos usar aquí para pedir los datos de 'userId'?
+        const response = await fetch(`/api/transactions/{userId}`);
+        const transactions = await response.json();
+
+        // 2. Cambiar el título de la página para que sea más claro
+        const pageTitle = document.querySelector("h1");
+        pageTitle.textContent = `Transacciones del Usuario: ${userId}`;
+
+        const tableBody = document.getElementById("transactions-table-body");
+        tableBody.innerHTML = ""; // Limpiamos la tabla
+
+        // 3. El código para rellenar la tabla es casi idéntico al de antes.
+        // Lo podemos copiar y pegar aquí.
+        transactions.forEach((transaction) => {
+          // El código para crear las filas y celdas va aquí.
+          // Es exactamente el mismo que usamos en `loadAllTransactions`.
+          const row = document.createElement("tr");
+
+          const idCell = document.createElement("td");
+          const userCell = document.createElement("td");
+          const typeCell = document.createElement("td");
+          const amountCell = document.createElement("td");
+          const statusCell = document.createElement("td");
+
+          idCell.textContent = transaction.id;
+          userCell.textContent = transaction.user_telegram_id; // Aquí no necesita ser un link
+          typeCell.textContent = transaction.transaction_type;
+          amountCell.textContent = transaction.amount_usd;
+          statusCell.textContent = transaction.status;
+
+          row.appendChild(idCell);
+          row.appendChild(userCell);
+          row.appendChild(typeCell);
+          row.appendChild(amountCell);
+          row.appendChild(statusCell);
+
+          tableBody.appendChild(row);
+        });
+      }
+
       // Llamamos a la función cuando la página se carga
       loadAllTransactions();
     </script>
