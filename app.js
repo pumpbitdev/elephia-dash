@@ -47,7 +47,7 @@ app.get('/api/transactions/:telegram_id', async (req, res) => {
     console.log(`Petición para el usuario: ${telegram_id}`);
 
     // 2. Ejecutamos la consulta filtrando por el ID
-    const [transactions] = pool.query('SELECT * FROM transactions WHERE telegram_id = ?;', [telegram_id]);
+    const [transactions] = await pool.query('SELECT * FROM transactions WHERE user_telegram_id = ?', [telegram_id]);
 
     // 3. Enviamos el resultado
     res.json(transactions);
