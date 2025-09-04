@@ -103,7 +103,7 @@
 
         // 1. Construir la URL correcta para la API
         // ¿Qué URL deberíamos usar aquí para pedir los datos de 'userId'?
-        const response = await fetch(`/api/transactions/{userId}`);
+        const response = await fetch('/api/transactions/{userId}');
         const transactions = await response.json();
 
         // 2. Cambiar el título de la página para que sea más claro
