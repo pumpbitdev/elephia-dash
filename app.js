@@ -1,9 +1,14 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
-import path from 'path';
+import path from 'path'; // <-- 1. IMPORTA EL MÓDULO 'path'
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+// --- CONFIGURACIÓN INICIAL ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // --- CONFIGURACIÓN INICIAL ---
 const app = express();
