@@ -29,7 +29,7 @@ app.get('/api/transactions', async (req, res) => {
     console.log("Petición recibida en /api/transactions");
 
     // 2. Ejecutar la consulta SQL aquí
-    const [transactions] = await pool.query('SELECT * FROM transactions');
+    const [transactions] = await pool.query('SELECT * FROM transactions;');
 
     // 3. Enviar los resultados como JSON
     res.json(transactions);
