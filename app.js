@@ -22,6 +22,13 @@ const pool = mysql.createPool({
 
 // --- RUTAS DE LA API ---
 
+
+app.get('/', (req, res) => {
+    // 2. USA res.sendFile PARA ENVIAR EL ARCHIVO HTML
+    // path.join une las partes de la ruta de forma correcta
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Endpoint para obtener TODAS las transacciones
 app.get('/api/transactions', async (req, res) => {
   try {
