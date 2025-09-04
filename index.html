@@ -1,79 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel de Transacciones</title>
     <style>
-        body { font-family: sans-serif; margin: 2em; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        tbody tr:hover { background-color: #f5f5f5; }
+      body {
+        font-family: sans-serif;
+        margin: 2em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      tbody tr:hover {
+        background-color: #f5f5f5;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Todas las Transacciones</h1>
     <table>
-        <thead>
-            <tr>
-                <th>ID Transacción</th>
-                <th>ID Usuario (Telegram)</th>
-                <th>Tipo</th>
-                <th>Monto USD</th>
-                <th>Referencia</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody id="transactions-table-body">
-            </tbody>
+      <thead>
+        <tr>
+          <th>ID Transacción</th>
+          <th>ID Usuario (Telegram)</th>
+          <th>Tipo</th>
+          <th>Monto USD</th>
+          <th>Referencia</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="transactions-table-body"></tbody>
     </table>
 
     <script>
-    // Función para cargar todas las transacciones
-    async function loadAllTransactions() {
-        const response = await fetch('/api/transactions'); // Pedimos los datos al backend
+      // Función para cargar todas las transacciones
+      async function loadAllTransactions() {
+        const response = await fetch("/api/transactions"); // Pedimos los datos al backend
         const transactions = await response.json();
-        
-        const tableBody = document.getElementById('transactions-table-body');
-        tableBody.innerHTML = ''; // Limpiamos la tabla por si acaso
+
+        const tableBody = document.getElementById("transactions-table-body");
+        tableBody.innerHTML = ""; // Limpiamos la tabla por si acaso
 
         // Recorremos cada transacción que nos llegó
-        transactions.forEach(transaction => {
-            // 1. Creamos una nueva fila (table row)
-            const row = document.createElement('tr');
+        transactions.forEach((transaction) => {
+          const row = document.createElement("tr");
 
-            // 2. Creamos una celda para cada dato que queremos mostrar
-            const idCell = document.createElement('td');
-            const userCell = document.createElement('td');
-            const typeCell = document.createElement('td');
-            const amountCell = document.createElement('td');
-            const referenceCell = document.createElement('td');
-            const statusCell = document.createElement('td');
+          // ... idCell, typeCell, etc., se crean igual que antes ...
+          const idCell = document.createElement("td");
+          const userCell = document.createElement("td"); // Esta celda va a cambiar
+          const typeCell = document.createElement("td");
+          const amountCell = document.createElement("td");
+          const statusCell = document.createElement("td");
 
-            // 3. Ponemos el contenido de la transacción dentro de cada celda
-            idCell.textContent = transaction.id;
-            userCell.textContent = transaction.user_telegram_id;
-            typeCell.textContent = transaction.transaction_type;
-            amountCell.textContent = transaction.amount_usd;
-            referenceCell.textContent = transaction.payment_reference;
-            statusCell.textContent = transaction.status;
+          idCell.textContent = transaction.id;
+          typeCell.textContent = transaction.transaction_type;
+          amountCell.textContent = transaction.amount_usd;
+          statusCell.textContent = transaction.status;
 
-            // 4. Añadimos (append) cada celda a la fila, en orden
-            row.appendChild(idCell);
-            row.appendChild(userCell);
-            row.appendChild(typeCell);
-            row.appendChild(amountCell);
-            row.appendChild(referenceCell);
-            row.appendChild(statusCell);
+          // --- INICIO DE LA MODIFICACIÓN ---
+          // 1. Creamos un elemento de enlace (<a>)
+          const userLink = document.createElement("a");
+          userLink.href = "#"; // El '#' evita que la página se recargue al hacer clic
+          userLink.textContent = transaction.user_telegram_id; // Le ponemos el ID como texto
 
-            // 5. Finalmente, añadimos la fila completa al cuerpo de la tabla
-            tableBody.appendChild(row);
+          // 2. Le añadimos un "escuchador de eventos" para el clic
+          userLink.addEventListener("click", (event) => {
+            // Detenemos el comportamiento normal del enlace
+            event.preventDefault();
+
+            // Llamamos a una nueva función para cargar los datos de este usuario
+            loadUserTransactions(transaction.user_telegram_id);
+          });
+
+          // 3. Metemos el enlace (<a>) dentro de la celda (<td>)
+          userCell.appendChild(userLink);
+          // --- FIN DE LA MODIFICACIÓN ---
+
+          // Añadimos las celdas a la fila, como antes
+          row.appendChild(idCell);
+          row.appendChild(userCell);
+          row.appendChild(typeCell);
+          row.appendChild(amountCell);
+          row.appendChild(statusCell);
+
+          tableBody.appendChild(row);
         });
-    }
+      }
 
-    // Llamamos a la función cuando la página se carga
-    loadAllTransactions();
-</script>
-</body>
+      // Llamamos a la función cuando la página se carga
+      loadAllTransactions();
+    </script>
+  </body>
 </html>
