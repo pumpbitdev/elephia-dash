@@ -112,6 +112,7 @@
                 <thead>
                     <tr>
                         <th>ID Transacción</th>
+                        <th>Referencia</th>
                         <th>Tipo</th>
                         <th>Monto USD</th>
                         <th>Estado</th>
@@ -196,9 +197,9 @@
                 
                 row.innerHTML = `
                     <td>${transaction.id}</td>
+                    <td>${transaction.payment_reference || '-'}</td>
                     <td>${transaction.transaction_type}</td>
                     <td>${transaction.amount_usd}</td>
-                    <td>${transaction.payment_reference}</td>
                 `;
                 row.appendChild(statusCell);
 
