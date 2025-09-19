@@ -5,97 +5,232 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Transacciones</title>
     <style>
-        body { font-family: sans-serif; margin: 2em; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        tbody tr:hover { background-color: #f5f5f5; }
-        a { color: #007bff; text-decoration: none; cursor: pointer; }
-        a:hover { text-decoration: underline; }
-        #back-button { margin-top: 1em; display: none; } /* Oculto por defecto */
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --header-bg: #2a2a2a;
+            --row-hover: #333;
+            --link-color: #4a90e2;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 1em;
+        }
+
+        h1, h2 {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--link-color);
+            padding-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: var(--header-bg);
+        }
+
+        tbody tr:hover {
+            background-color: var(--row-hover);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .status-changeable {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .status-changeable:hover {
+            text-decoration: underline;
+            color: #ff9800;
+        }
+
+        #user-transactions-section {
+            display: none; /* Oculto por defecto */
+            margin-top: 2em;
+        }
+         @media screen and (max-width: 600px) {
+            body {
+                padding: 0.5em;
+            }
+            th, td {
+                padding: 8px 5px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Todas las Transacciones</h1>
-    <button id="back-button">← Volver a Todas las Transacciones</button>
-    <table>
-        <thead>
-            <tr>
-                <th>ID Transacción</th>
-                <th>ID Usuario (Telegram)</th>
-                <th>Tipo</th>
-                <th>Monto USD</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody id="transactions-table-body"></tbody>
-    </table>
+    <div class="container">
+        <section id="all-transactions-section">
+            <h1>Todas las Transacciones</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Transacción</th>
+                        <th>ID Usuario (Telegram)</th>
+                        <th>Tipo</th>
+                        <th>Monto USD</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="all-transactions-table-body"></tbody>
+            </table>
+        </section>
+
+        <section id="user-transactions-section">
+            <h2 id="user-transactions-title">Transacciones del Usuario</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Transacción</th>
+                        <th>Tipo</th>
+                        <th>Monto USD</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="user-transactions-table-body"></tbody>
+            </table>
+        </section>
+    </div>
 
     <script>
-        const tableBody = document.getElementById('transactions-table-body');
-        const pageTitle = document.querySelector('h1');
-        const backButton = document.getElementById('back-button');
+        const allTransactionsTableBody = document.getElementById('all-transactions-table-body');
+        const userTransactionsTableBody = document.getElementById('user-transactions-table-body');
+        const userTransactionsSection = document.getElementById('user-transactions-section');
+        const userTransactionsTitle = document.getElementById('user-transactions-title');
+        const allTransactionsSection = document.getElementById('all-transactions-section');
 
         // Función para cargar TODAS las transacciones
         async function loadAllTransactions() {
-            pageTitle.textContent = 'Todas las Transacciones';
-            backButton.style.display = 'none'; // Ocultamos el botón de volver
+            allTransactionsSection.style.display = 'block';
+            userTransactionsSection.style.display = 'none';
 
             const response = await fetch('/api/transactions');
             const transactions = await response.json();
             
-            renderTable(transactions, true); // Usamos una función para dibujar la tabla
+            allTransactionsTableBody.innerHTML = ''; // Limpiar tabla
+            const userGroups = {};
+            transactions.forEach(t => {
+                if(!userGroups[t.user_telegram_id]){
+                    userGroups[t.user_telegram_id] = [];
+                }
+                userGroups[t.user_telegram_id].push(t);
+
+            });
+
+            for(const userId in userGroups){
+                const row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                row.innerHTML = `
+                    <td>-</td>
+                    <td><a href="#" data-user-id="${userId}">${userId}</a></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                `;
+                row.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadUserTransactions(userId);
+                });
+                allTransactionsTableBody.appendChild(row);
+            }
         }
 
         // Función para cargar las transacciones de UN usuario
         async function loadUserTransactions(userId) {
-            pageTitle.textContent = `Transacciones del Usuario: ${userId}`;
-            backButton.style.display = 'block'; // Mostramos el botón de volver
+            allTransactionsSection.style.display = 'none';
+            userTransactionsSection.style.display = 'block';
+            userTransactionsTitle.textContent = `Transacciones del Usuario: ${userId}`;
 
             const response = await fetch(`/api/transactions/${userId}`);
             const transactions = await response.json();
             
-            renderTable(transactions, false); // Usamos la misma función
+            renderUserTransactions(transactions);
         }
 
-        // Función genérica para "dibujar" la tabla (evita repetir código)
-        function renderTable(transactions, makeUserClickable) {
-            tableBody.innerHTML = ''; // Siempre limpiamos la tabla primero
+        // Dibujar la tabla de transacciones de usuario
+        function renderUserTransactions(transactions) {
+            userTransactionsTableBody.innerHTML = ''; 
 
             transactions.forEach(transaction => {
                 const row = document.createElement('tr');
+                const statusCell = document.createElement('td');
+                
+                statusCell.textContent = transaction.status;
+                if (transaction.status === 'Pendiente') {
+                    statusCell.classList.add('status-changeable');
+                    statusCell.title = 'Click para completar';
+                    statusCell.addEventListener('click', () => {
+                        updateTransactionStatus(transaction.id, 'Completado', transaction.user_telegram_id);
+                    });
+                }
                 
                 row.innerHTML = `
                     <td>${transaction.id}</td>
-                    <td>${
-                        makeUserClickable 
-                        ? `<a href="#" data-user-id="${transaction.user_telegram_id}">${transaction.user_telegram_id}</a>` 
-                        : transaction.user_telegram_id
-                    }</td>
                     <td>${transaction.transaction_type}</td>
                     <td>${transaction.amount_usd}</td>
-                    <td>${transaction.status}</td>
                 `;
+                row.appendChild(statusCell);
 
-                tableBody.appendChild(row);
+                userTransactionsTableBody.appendChild(row);
             });
         }
         
-        // --- EVENT LISTENERS ---
+        // Función para actualizar el estado
+        async function updateTransactionStatus(transactionId, newStatus, userId) {
+            try {
+                const response = await fetch(`/api/transactions/${transactionId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                });
 
-        // Event listener para el botón de volver
-        backButton.addEventListener('click', loadAllTransactions);
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el estado');
+                }
 
-        // Event listener para los clics en la tabla (Delegación de eventos)
-        tableBody.addEventListener('click', (event) => {
-            if (event.target.tagName === 'A' && event.target.dataset.userId) {
-                event.preventDefault();
-                const userId = event.target.dataset.userId;
+                // Si la actualización fue exitosa, recargamos las transacciones del usuario
+                // para reflejar el cambio.
                 loadUserTransactions(userId);
-            }
-        });
 
-        // Carga inicial al abrir la página
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo actualizar el estado de la transacción.');
+            }
+        }
+
+        // Carga inicial
         loadAllTransactions();
     </script>
 </body>

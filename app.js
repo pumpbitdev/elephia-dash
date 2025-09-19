@@ -1,21 +1,22 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
-import path from 'path'; // <-- 1. IMPORTA EL MÓDULO 'path'
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
+
 // --- CONFIGURACIÓN INICIAL ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-// --- CONFIGURACIÓN INICIAL ---
 const app = express();
-const PORT = process.env.PORT || 3000; // Usaremos el puerto 3000 para el panel
+const PORT = process.env.PORT || 3000;
+
+// Middleware para entender JSON
+app.use(express.json());
 
 // --- CONEXIÓN A LA BASE DE DATOS ---
-// Asegúrate de que estas variables de entorno existan en tu archivo .env
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER,
@@ -28,45 +29,59 @@ const pool = mysql.createPool({
 
 // --- RUTAS DE LA API ---
 
-
+// Ruta para servir el archivo HTML principal
 app.get('/', (req, res) => {
-    // 2. USA res.sendFile PARA ENVIAR EL ARCHIVO HTML
-    // path.join une las partes de la ruta de forma correcta
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Endpoint para obtener TODAS las transacciones
 app.get('/api/transactions', async (req, res) => {
   try {
-    // 1. Obtener una conexión del pool (esto lo maneja mysql2/promise)
-    console.log("Petición recibida en /api/transactions");
-
-    // 2. Ejecutar la consulta SQL aquí
-    const [transactions] = await pool.query('SELECT * FROM transactions;');
-
-    // 3. Enviar los resultados como JSON
+    const [transactions] = await pool.query('SELECT * FROM transactions ORDER BY created_at DESC');
     res.json(transactions);
-
   } catch (error) {
     console.error("Error al obtener las transacciones:", error);
     res.status(500).json({ error: "Error interno del servidor." });
   }
 });
 
+// Endpoint para obtener las transacciones de UN usuario
 app.get('/api/transactions/:telegram_id', async (req, res) => {
   try {
-    // 1. Obtenemos el ID de los parámetros de la URL
     const { telegram_id } = req.params;
-    console.log(`Petición para el usuario: ${telegram_id}`);
-
-    // 2. Ejecutamos la consulta filtrando por el ID
-    const [transactions] = await pool.query('SELECT * FROM transactions WHERE user_telegram_id = ?', [telegram_id]);
-
-    // 3. Enviamos el resultado
+    const [transactions] = await pool.query('SELECT * FROM transactions WHERE user_telegram_id = ? ORDER BY created_at DESC', [telegram_id]);
     res.json(transactions);
+  } catch (error) {
+    console.error(`Error al obtener transacciones para ${req.params.telegram_id}:`, error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+});
+
+// --- Endpoint NUEVO para actualizar el estado de una transacción ---
+app.put('/api/transactions/:transactionId', async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    const { status } = req.body; // Recibimos el nuevo estado desde el frontend
+
+    if (!status) {
+      return res.status(400).json({ error: 'El nuevo estado es requerido.' });
+    }
+
+    const [result] = await pool.query(
+      'UPDATE transactions SET status = ? WHERE id = ?',
+      [status, transactionId]
+    );
+
+    if (result.affectedRows === 0) {
+      // Si no se afectó ninguna fila, significa que la transacción no se encontró
+      return res.status(404).json({ error: 'Transacción no encontrada.' });
+    }
+    
+    // Enviamos una respuesta exitosa
+    res.json({ message: 'Estado actualizado correctamente' });
 
   } catch (error) {
-    console.error(`Error al obtener transacciones para ${telegram_id}:`, error);
+    console.error(`Error al actualizar la transacción ${req.params.transactionId}:`, error);
     res.status(500).json({ error: "Error interno del servidor." });
   }
 });
