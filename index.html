@@ -115,7 +115,7 @@
                         <th>Referencia</th>
                         <th>Tipo</th>
                         <th>Monto USD</th>
-                        <th>Referencia</th>
+                        <th>Total BS</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
@@ -201,7 +201,7 @@
                     <td>${transaction.payment_reference || '-'}</td>
                     <td>${transaction.transaction_type}</td>
                     <td>${transaction.amount_usd}</td>
-                    <td>${transaction.payment_reference || '-'}</td>
+                    <td>${transaction.total_bs || '-'}</td>
                     
                 `;
                 row.appendChild(statusCell);
