@@ -57,6 +57,16 @@ app.get('/api/transactions/:telegram_id', async (req, res) => {
   }
 });
 
+app.get('/api/users', async (req, res) => {
+  try {
+    const [users] = await pool.query('SELECT * FROM users');
+    res.json(users);
+  } catch (error) {
+    console.error(`Error al obtener transacciones para ${req.params.telegram_id}:`, error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+});
+
 app.get('/api/payment-methods/:telegram_id', async (req, res) =>  {
   try {
     const { telegram_id } = req.params;
