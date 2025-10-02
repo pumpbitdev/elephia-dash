@@ -57,6 +57,17 @@ app.get('/api/transactions/:telegram_id', async (req, res) => {
   }
 });
 
+app.get('/api/payment-methods/:telegram_id', async (req, res) =>  {
+  try {
+    const { telegram_id } = req.params;
+    const [paymentMethods] = await pool.query('SELECT * FROM payment_methods WHERE user_telegram_id = ?', [telegram_id]);
+    res.json(paymentMethods);
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+
+});
+
 // --- Endpoint NUEVO para actualizar el estado de una transacción ---
 app.put('/api/transactions/:transactionId', async (req, res) => {
   try {
