@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,8 @@
             padding: 1em;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             color: var(--text-color);
             border-bottom: 2px solid var(--link-color);
             padding-bottom: 10px;
@@ -40,7 +42,8 @@
             margin-top: 1em;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid var(--border-color);
             padding: 12px 15px;
             text-align: left;
@@ -75,19 +78,24 @@
         }
 
         #user-transactions-section {
-            display: none; /* Oculto por defecto */
+            display: none;
+            /* Oculto por defecto */
             margin-top: 2em;
         }
-         @media screen and (max-width: 600px) {
+
+        @media screen and (max-width: 600px) {
             body {
                 padding: 0.5em;
             }
-            th, td {
+
+            th,
+            td {
                 padding: 8px 5px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <section id="all-transactions-section">
@@ -125,40 +133,47 @@
     </div>
 
     <script>
-        const allTransactionsTableBody = document.getElementById('all-transactions-table-body');
-        const userTransactionsTableBody = document.getElementById('user-transactions-table-body');
-        const userTransactionsSection = document.getElementById('user-transactions-section');
-        const userTransactionsTitle = document.getElementById('user-transactions-title');
-        const allTransactionsSection = document.getElementById('all-transactions-section');
+        // === Sistema de actualización automática ===
 
-        // Función para cargar TODAS las transacciones
+        // Guardamos los IDs de las transacciones ya mostradas
+        let knownTransactionIds = new Set();
+
+        // Llamamos esta función después de renderizar las transacciones
+        function rememberTransactions(transactions) {
+            transactions.forEach(t => knownTransactionIds.add(t.id));
+        }
+
+        // Sobrescribimos loadAllTransactions para registrar IDs
         async function loadAllTransactions() {
             allTransactionsSection.style.display = 'block';
             userTransactionsSection.style.display = 'none';
 
             const response = await fetch('/api/transactions');
             const transactions = await response.json();
-            
+
             allTransactionsTableBody.innerHTML = ''; // Limpiar tabla
+
+            // Registrar IDs conocidos
+            rememberTransactions(transactions);
+
             const userGroups = {};
             transactions.forEach(t => {
-                if(!userGroups[t.user_telegram_id]){
+                if (!userGroups[t.user_telegram_id]) {
                     userGroups[t.user_telegram_id] = [];
                 }
                 userGroups[t.user_telegram_id].push(t);
-
             });
 
-            for(const userId in userGroups){
+            for (const userId in userGroups) {
                 const row = document.createElement('tr');
                 row.style.cursor = 'pointer';
                 row.innerHTML = `
-                    <td>-</td>
-                    <td><a href="#" data-user-id="${userId}">${userId}</a></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                `;
+            <td>-</td>
+            <td><a href="#" data-user-id="${userId}">${userId}</a></td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        `;
                 row.addEventListener('click', (e) => {
                     e.preventDefault();
                     loadUserTransactions(userId);
@@ -167,7 +182,7 @@
             }
         }
 
-        // Función para cargar las transacciones de UN usuario
+        // Sobrescribimos loadUserTransactions para registrar IDs
         async function loadUserTransactions(userId) {
             allTransactionsSection.style.display = 'none';
             userTransactionsSection.style.display = 'block';
@@ -175,68 +190,67 @@
 
             const response = await fetch(`/api/transactions/${userId}`);
             const transactions = await response.json();
-            
+
+            rememberTransactions(transactions);
             renderUserTransactions(transactions);
         }
 
-        // Dibujar la tabla de transacciones de usuario
-        function renderUserTransactions(transactions) {
-            userTransactionsTableBody.innerHTML = ''; 
-
-            transactions.forEach(transaction => {
-                const row = document.createElement('tr');
-                const statusCell = document.createElement('td');
-                
-                statusCell.textContent = transaction.status;
-                if (transaction.status === 'Pendiente') {
-                    statusCell.classList.add('status-changeable');
-                    statusCell.title = 'Click para completar';
-                    statusCell.addEventListener('click', () => {
-                        updateTransactionStatus(transaction.id, 'Completada', transaction.user_telegram_id);
-                    });
-                }
-                
-                row.innerHTML = `
-                    <td>${transaction.id}</td>
-                    <td>${transaction.payment_reference || '-'}</td>
-                    <td>${transaction.transaction_type}</td>
-                    <td>${transaction.amount_usd}</td>
-                    <td>${transaction.total_bs || '-'}</td>
-                    
-                `;
-                row.appendChild(statusCell);
-
-                userTransactionsTableBody.appendChild(row);
-            });
-        }
-        
-        // Función para actualizar el estado
-        async function updateTransactionStatus(transactionId, newStatus, userId) {
+        // === NUEVA FUNCIÓN: Actualización periódica ===
+        async function checkForNewTransactions() {
             try {
-                const response = await fetch(`/api/transactions/${transactionId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status: newStatus }),
-                });
+                const response = await fetch('/api/transactions');
+                const transactions = await response.json();
 
-                if (!response.ok) {
-                    throw new Error('Error al actualizar el estado');
+                // Filtramos solo las nuevas
+                const newOnes = transactions.filter(t => !knownTransactionIds.has(t.id));
+
+                if (newOnes.length > 0) {
+                    console.log("💡 Nuevas transacciones detectadas:", newOnes);
+
+                    // Agregamos las nuevas al registro
+                    rememberTransactions(newOnes);
+
+                    // Si estamos en la vista general, recargamos todo
+                    if (allTransactionsSection.style.display === 'block') {
+                        loadAllTransactions();
+                    } else {
+                        // Si estamos en la vista de usuario, agregamos las nuevas
+                        const currentUserId = userTransactionsTitle.textContent.split(': ')[1];
+                        const newForUser = newOnes.filter(t => String(t.user_telegram_id) === currentUserId);
+                        if (newForUser.length > 0) {
+                            newForUser.forEach(t => {
+                                const row = document.createElement('tr');
+                                const statusCell = document.createElement('td');
+                                statusCell.textContent = t.status;
+                                if (t.status === 'Pendiente') {
+                                    statusCell.classList.add('status-changeable');
+                                    statusCell.title = 'Click para completar';
+                                    statusCell.addEventListener('click', () => {
+                                        updateTransactionStatus(t.id, 'Completada', t.user_telegram_id);
+                                    });
+                                }
+                                row.innerHTML = `
+                            <td>${t.id}</td>
+                            <td>${t.payment_reference || '-'}</td>
+                            <td>${t.transaction_type}</td>
+                            <td>${t.amount_usd}</td>
+                            <td>${t.total_bs || '-'}</td>
+                        `;
+                                row.appendChild(statusCell);
+                                userTransactionsTableBody.prepend(row); // Agregar al inicio
+                            });
+                        }
+                    }
                 }
-
-                // Si la actualización fue exitosa, recargamos las transacciones del usuario
-                // para reflejar el cambio.
-                loadUserTransactions(userId);
-
             } catch (error) {
-                console.error('Error:', error);
-                alert('No se pudo actualizar el estado de la transacción.');
+                console.error("Error verificando nuevas transacciones:", error);
             }
         }
 
-        // Carga inicial
-        loadAllTransactions();
+        // Iniciar chequeo automático cada 10 segundos
+        setInterval(checkForNewTransactions, 10000);
+
     </script>
 </body>
+
 </html>
