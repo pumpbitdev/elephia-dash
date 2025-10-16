@@ -7,7 +7,7 @@ const pageInfo = document.getElementById("pageInfo");
 
 let transactions = [];
 let currentPage = 1;
-const pageSize = 5;
+const pageSize = 15;
 
 // ---------- CARGAR Y MOSTRAR DATOS ----------
 async function loadTransactions() {
