@@ -95,15 +95,6 @@ function renderTable() {
       container.style.display = "block";
     }
   }
-  
-
-  // --- Paginación ---
-  pageInfo.textContent = `Página ${currentPage} de ${Math.ceil(
-    transactions.length / pageSize
-  )}`;
-  prevBtn.disabled = currentPage === 1;
-  nextBtn.disabled = currentPage * pageSize >= transactions.length;
-}
 
 function createCell(text, label) {
   const td = document.createElement("td");
