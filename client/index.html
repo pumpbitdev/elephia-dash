@@ -23,9 +23,35 @@
       <header>
         <h1>Transacciones</h1>
       </header>
-      <section class="content-area">
-        <p>Aquí irá la tabla y demás componentes...</p>
-      </section>
+        <section class="content-area">
+            <div class="table-header">
+            <h2>Listado de Transacciones</h2>
+            </div>
+        
+            <div class="table-container">
+            <table id="transactionsTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Aquí se llenará dinámicamente -->
+                </tbody>
+            </table>
+            </div>
+        
+            <div class="pagination">
+            <button id="prevPage">Anterior</button>
+            <span id="pageInfo">Página 1</span>
+            <button id="nextPage">Siguiente</button>
+            </div>
+        </section>
+      
     </main>
   </div>
 
