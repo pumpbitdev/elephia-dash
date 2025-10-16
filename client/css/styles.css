@@ -228,5 +228,28 @@
       gap: 0.5em;
     }
   }
+
+  .payment-methods {
+    background: rgba(40, 40, 40, 0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 1em;
+  }
+  
+  .payment-methods h3 {
+    margin-bottom: 0.8em;
+    color: var(--accent);
+  }
+  
+  .payment-methods ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .payment-methods li {
+    padding: 0.4em 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
   
   
