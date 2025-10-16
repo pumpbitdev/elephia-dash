@@ -93,7 +93,7 @@ async function approveTransaction(id, button) {
     button.textContent = "Aprobando...";
 
     const res = await fetch(`${API_URL}/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "Completada" }),
     });
