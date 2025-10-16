@@ -148,7 +148,7 @@
             allTransactionsSection.style.display = 'block';
             userTransactionsSection.style.display = 'none';
 
-            const response = await fetch('/api/transactions');
+            const response = await fetch('http://62.169.27.35:3000/api/transactions');
             const transactions = await response.json();
 
             allTransactionsTableBody.innerHTML = ''; // Limpiar tabla
@@ -188,7 +188,7 @@
             userTransactionsSection.style.display = 'block';
             userTransactionsTitle.textContent = `Transacciones del Usuario: ${userId}`;
 
-            const response = await fetch(`/api/transactions/${userId}`);
+            const response = await fetch(`http://62.169.27.35:3000/api/transactions/${userId}`);
             const transactions = await response.json();
 
             rememberTransactions(transactions);
@@ -198,7 +198,7 @@
         // === NUEVA FUNCIÓN: Actualización periódica ===
         async function checkForNewTransactions() {
             try {
-                const response = await fetch('/api/transactions');
+                const response = await fetch('http://62.169.27.35:3000/api/transactions');
                 const transactions = await response.json();
 
                 // Filtramos solo las nuevas
