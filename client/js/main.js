@@ -84,7 +84,7 @@ function renderTable() {
       } else {
         methods.forEach((m) => {
           const li = document.createElement("li");
-          li.textContent = `Tipo: ${m.method_type} | Cuenta: ${m.account || m.details || "-"}`;
+          li.textContent = `Tipo: ${m.method_type} | Nickname: ${m.nickname || "-"} | Cuenta: ${m.account_details || "-"} | Banco: ${m.pm_bank_name || "-"} | Tel: ${m.pm_phone_number || "-"}`;
           list.appendChild(li);
         });
       }
