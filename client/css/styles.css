@@ -62,19 +62,24 @@
     cursor: pointer;
   }
   
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 2em;
+  .sidebar ul li {
+    padding: 0.8em 1em;
+    border-radius: 12px;
+    transition: background var(--transition), color var(--transition);
+    color: var(--text-light);
+    font-weight: 500;
   }
   
-  .sidebar li {
-    margin: 1em 0;
-    cursor: pointer;
-  }
-  
-  .sidebar li.active {
+  .sidebar ul li:hover {
+    background: rgba(74, 144, 226, 0.2); /* efecto hover azul suave */
     color: var(--accent);
+  }
+  
+  /* Elemento activo */
+  .sidebar ul li.active {
+    background: rgba(74, 144, 226, 0.3);
+    color: var(--accent);
+    font-weight: 600;
   }
   
   /* Botón abrir sidebar */
