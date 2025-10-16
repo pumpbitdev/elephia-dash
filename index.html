@@ -236,7 +236,9 @@
         }
 
         // Carga inicial
-        setInterval(loadAllTransactions(), 10000);
+        setInterval(() => {
+            loadAllTransactions(); // No uses await aquí directamente
+        }, 10000);
     </script>
 </body>
 </html>
