@@ -34,6 +34,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/index.html"));
 });
 
+app.get("/user", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/user.html"));
+  });
+
 // --- Inicia el servidor ---
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);

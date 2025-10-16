@@ -56,7 +56,8 @@ function renderTable() {
   
       // --- Click en la fila para cargar métodos de pago ---
       row.addEventListener("click", () => {
-        loadPaymentMethods(tx.user_telegram_id);
+        //loadPaymentMethods(tx.user_telegram_id);
+        window.location.href = `/user?telegramId=${tx.user_telegram_id}`;
       });
     });
   

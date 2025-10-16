@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transacciones del Usuario</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <h2>Mindgle</h2>
+      <nav>
+        <ul>
+          <li onclick="window.location.href='index.html'">Transacciones</li>
+          <li>Usuarios</li>
+          <li>Métodos de Pago</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <h1 id="userTitle">Transacciones del Usuario</h1>
+      </header>
+
+      <section class="content-area">
+        <div class="table-container">
+          <table id="userTransactionsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Monto USD</th>
+                <th>Comisión USD</th>
+                <th>Total USD</th>
+                <th>Tipo de Cambio</th>
+                <th>Total BS</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button id="prevPage">Anterior</button>
+          <span id="pageInfo">Página 1</span>
+          <button id="nextPage">Siguiente</button>
+        </div>
+
+        <section id="userPaymentMethods" class="payment-methods" style="display:none; margin-top:1.5em;">
+          <h3>Métodos de pago del usuario</h3>
+          <ul id="paymentMethodsList"></ul>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/user.js"></script>
+</body>
+</html>
