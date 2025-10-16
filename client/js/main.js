@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/transactions"; // Ajusta el puerto si es distinto
+const API_URL = "http://62.169.27.35:3000/api/transactions"; // Ajusta el puerto si es distinto
 const tableBody = document.querySelector("#transactionsTable tbody");
 const prevBtn = document.getElementById("prevPage");
 const nextBtn = document.getElementById("nextPage");
