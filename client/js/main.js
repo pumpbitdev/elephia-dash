@@ -146,13 +146,24 @@ const sidebar = document.getElementById("sidebar");
 const openBtn = document.getElementById("openSidebar");
 const closeBtn = document.getElementById("closeSidebar");
 
-openBtn.addEventListener("click", () => {
-  sidebar.style.left = "0";
+function openSidebar() {
+  sidebar.classList.add("active");
+}
+
+function closeSidebar() {
+  sidebar.classList.remove("active");
+}
+
+openBtn.addEventListener("click", openSidebar);
+closeBtn.addEventListener("click", closeSidebar);
+
+// Cerrar al hacer click en enlace mobile
+sidebar.querySelectorAll("li").forEach(link => {
+  link.addEventListener("click", () => {
+    if (window.innerWidth <= 768) closeSidebar();
+  });
 });
 
-closeBtn.addEventListener("click", () => {
-  sidebar.style.left = "-260px";
-});
 
 
 // ---------- INICIO ----------
