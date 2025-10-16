@@ -5,6 +5,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool } from "./db/db.js";
 import transactionsRouter from "./routes/transactions.js";
+import usersRouter from "./routes/users.js";
+import paymentMethodsRouter from "./routes/paymentMethods.js";
+
 
 dotenv.config();
 
@@ -21,6 +24,10 @@ app.use(express.static(path.join(__dirname, "../client"))); // Sirve tu panel
 
 // --- Rutas API ---
 app.use("/api/transactions", transactionsRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/payment-methods", paymentMethodsRouter);
+
+console.log("✅ Rutas inicializado. ")
 
 // --- Ruta raíz (panel) ---
 app.get("/", (req, res) => {

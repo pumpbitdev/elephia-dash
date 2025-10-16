@@ -1,0 +1,129 @@
+/* --------- RESET & VARIABLES --------- */
+:root {
+    --bg-color: #0e0e0f;
+    --glass-bg: rgba(40, 40, 40, 0.6);
+    --accent: #4a90e2;
+    --text-light: #f0f0f0;
+    --text-muted: #bbb;
+    --border-radius: 16px;
+    --blur: 12px;
+    --transition: 0.3s ease;
+    --sidebar-width: 240px;
+    --font: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: var(--font);
+    background: var(--bg-color);
+    color: var(--text-light);
+    height: 100vh;
+    display: flex;
+  }
+  
+  /* --------- DASHBOARD LAYOUT --------- */
+  .dashboard {
+    display: flex;
+    width: 100%;
+  }
+  
+  /* --------- SIDEBAR --------- */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .sidebar h2 {
+    font-size: 1.3em;
+    margin-bottom: 1em;
+    color: var(--accent);
+    text-align: center;
+  }
+  
+  .sidebar nav ul {
+    list-style: none;
+  }
+  
+  .sidebar nav li {
+    padding: 0.8em 1em;
+    margin: 0.4em 0;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-muted);
+  }
+  
+  .sidebar nav li:hover,
+  .sidebar nav li.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+  }
+  
+  /* --------- MAIN CONTENT --------- */
+  .main-content {
+    flex: 1;
+    padding: 2em;
+    overflow-y: auto;
+  }
+  
+  header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    padding: 1em 1.5em;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  header h1 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--text-light);
+  }
+  
+  /* --------- CONTENT AREA --------- */
+  .content-area {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    border-radius: var(--border-radius);
+    padding: 1.5em;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* --------- RESPONSIVE --------- */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: -240px;
+      top: 0;
+      height: 100%;
+      transition: left var(--transition);
+    }
+  
+    .sidebar.active {
+      left: 0;
+    }
+  
+    .main-content {
+      padding: 1em;
+    }
+  
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  
