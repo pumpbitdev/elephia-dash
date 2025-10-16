@@ -1,5 +1,5 @@
-const API_TX = "http://localhost:3000/api/transactions";
-const API_PM = "http://localhost:3000/api/payment-methods";
+const API_TX = "http://62.169.27.35:3000/api/transactions";
+const API_PM = "http://62.169.27.35:3000/api/payment-methods";
 
 const tableBody = document.querySelector("#userTransactionsTable tbody");
 const prevBtn = document.getElementById("prevPage");
