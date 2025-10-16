@@ -33,41 +33,88 @@
   }
   
   /* --------- SIDEBAR --------- */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--blur));
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5em;
+  /* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0; /* desktop lo mantiene visible */
+    width: 260px;
+    height: 100%;
+    background: rgba(30,30,30,0.85);
+    backdrop-filter: blur(12px);
+    color: #fff;
+    padding: 1em;
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .sidebar-header {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
+    align-items: center;
   }
   
-  .sidebar h2 {
-    font-size: 1.3em;
-    margin-bottom: 1em;
-    color: var(--accent);
-    text-align: center;
-  }
-  
-  .sidebar nav ul {
-    list-style: none;
-  }
-  
-  .sidebar nav li {
-    padding: 0.8em 1em;
-    margin: 0.4em 0;
-    border-radius: var(--border-radius);
+  .close-btn {
+    display: none; /* solo móvil */
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
     cursor: pointer;
-    transition: var(--transition);
-    color: var(--text-muted);
   }
   
-  .sidebar nav li:hover,
-  .sidebar nav li.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 2em;
+  }
+  
+  .sidebar li {
+    margin: 1em 0;
+    cursor: pointer;
+  }
+  
+  .sidebar li.active {
+    color: #4a90e2;
+  }
+  
+  /* Botón abrir sidebar */
+  .open-btn {
+    display: none;
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    font-size: 2em;
+    background: rgba(30,30,30,0.8);
+    border: none;
+    color: #fff;
+    padding: 0.2em 0.5em;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+  
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    .sidebar {
+      left: -260px; /* oculto por defecto en móvil */
+    }
+  
+    .close-btn {
+      display: block;
+    }
+  
+    .open-btn {
+      display: block;
+    }
+  
+    .dashboard {
+      flex-direction: column;
+    }
+  
+    .main-content {
+      margin-left: 0; /* eliminar espacio lateral */
+    }
   }
   
   /* --------- MAIN CONTENT --------- */
