@@ -6,9 +6,7 @@ const router = express.Router();
 // --- Obtener TODAS las transacciones ---
 router.get("/", async (req, res) => {
   try {
-    const [transactions] = await pool.query(
-      "SELECT * FROM transactions ORDER BY created_at DESC"
-    );
+    const [transactions] = await pool.query("SELECT * FROM transactions ORDER BY created_at DESC");
     res.json(transactions);
   } catch (error) {
     console.error("❌ Error al obtener transacciones:", error);
