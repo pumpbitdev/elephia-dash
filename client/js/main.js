@@ -52,7 +52,7 @@ function renderTable() {
       btn.addEventListener("click", () => approveTransaction(tx.id, btn));
       actionCell.appendChild(btn);
   
-      row.append(idCell, userCell, typeCell, amountCell, statusCell, actionCell);
+      row.append(idCell, refCell, userCell, typeCell, amountCell, statusCell, actionCell);
       tableBody.appendChild(row);
   
       // --- Click en la fila para cargar métodos de pago ---
