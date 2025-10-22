@@ -33,6 +33,7 @@ function renderTable() {
       const row = document.createElement("tr");
   
       const idCell = createCell(tx.id, "ID");
+      const refCell = createCell(tx.payment_reference, "Referencia");
       const userCell = createCell(tx.user_telegram_id || "-", "Usuario");
       const typeCell = createCell(tx.transaction_type || "-", "Tipo");
       const amountCell = createCell(
