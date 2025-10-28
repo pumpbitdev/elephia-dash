@@ -23,9 +23,7 @@ router.get("/", async (req, res) => {
 
   try {
     const [methods] = await pool.query(
-      "SELECT * FROM payment_methods",
-      [telegram_id]
-    );
+      "SELECT * FROM payment_methods");
     res.json(methods);
   } catch (error) {
     console.error(`❌ Error al obtener métodos de pago para ${telegram_id}:`, error);
