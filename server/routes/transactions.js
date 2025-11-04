@@ -31,7 +31,7 @@ router.get("/:telegram_id", async (req, res) => {
 
 // --- Actualizar estado de una transacción ---
 router.put("/:transactionId", async (req, res) => {
-  const { transactionId } = req.params;
+  const { transactionId } = r0eq.params;
   const { status } = req.body;
 
   if (!status) {
